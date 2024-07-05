@@ -76,7 +76,7 @@ const Home = () => {
     connectWallet();
     getDeployer();
     // console.log(deployer,'  ',account);
-  }, []);
+  });
 
   useEffect(() => {
     getContributorStatus();
