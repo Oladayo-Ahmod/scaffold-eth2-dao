@@ -1,4 +1,4 @@
-import { assert } from "chai";
+import { assert, expect } from "chai";
 import { ethers } from "hardhat";
 import { DAO } from "../typechain-types";
 
@@ -61,11 +61,8 @@ describe("DAO", function () {
     it("performs and retrieves upvote", async () => {
       await dao.connect(stakeholder).performVote(0, true);
       const vote = await dao.getProposalVote("0");
-      console.log(vote);
 
-      // expect(events.args[7]).to.equal(true)
-      // expect(events.args[4]).to.equal(amount)
-      // expect(events.args[3]).to.equal(beneficiary.address)
+      expect(vote[0].voter).to.equal(stakeholder.address);
     });
   });
 });
