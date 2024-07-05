@@ -37,10 +37,16 @@
   },
   "packageManager": "yarn@3.2.3",
   "devDependencies": {
+    "@types/bootstrap": "^5",
+    "@types/isotope-layout": "^3",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3"
   },
   "engines": {
     "node": ">=18.17.0"
+  },
+  "dependencies": {
+    "bootstrap": "^5.3.3",
+    "isotope-layout": "^3.0.6"
   }
 }
