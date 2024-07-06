@@ -14,11 +14,6 @@ const ADDRESS = deployedContracts[11155111].DAO.address;
 
 export const GOVERNANCE_CONTEXT = createContext<GovernanceProps | undefined>(undefined);
 
-let connect: any;
-if (typeof window !== "undefined") {
-  connect = (window as any).ethereum;
-}
-
 const GovernmentProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // states variables
   const [account, setAccount] = useState<string>();
@@ -38,6 +33,14 @@ const GovernmentProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     amount: "",
   });
 
+  let connect: any;
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      connect = (window as any).ethereum;
+    }
+  }, []);
+
   // wallet connection
   const connectWallet: GovernanceProps["connectWallet"] = async function () {
     try {
@@ -54,11 +57,13 @@ const GovernmentProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // retrieve contract deployer
   const getDeployer: GovernanceProps["getDeployer"] = async () => {
     try {
-      const provider = new ethers.BrowserProvider(connect).provider;
-      const signer = await provider.getSigner();
-      const contract = new ethers.Contract(ADDRESS, ABI, signer);
-      const deployer = await contract.getDeployer();
-      setDeployer(deployer);
+      if (connect) {
+        const provider = new ethers.BrowserProvider(connect).provider;
+        const signer = await provider.getSigner();
+        const contract = new ethers.Contract(ADDRESS, ABI, signer);
+        const deployer = await contract.getDeployer();
+        setDeployer(deployer);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -100,13 +105,15 @@ const GovernmentProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // retrieve total balance
   const getTotalBalance: GovernanceProps["getTotalBalance"] = async () => {
     try {
-      const provider = new ethers.BrowserProvider(connect).provider;
-      const signer = await provider.getSigner();
-      const contract = new ethers.Contract(ADDRESS, ABI, signer);
-      const tx = await contract.getTotalBalance();
-      let balance = await tx.toString();
-      balance = ethers.formatUnits(balance, "ether");
-      setTotalBalance(balance);
+      if (connect) {
+        const provider = new ethers.BrowserProvider(connect).provider;
+        const signer = await provider.getSigner();
+        const contract = new ethers.Contract(ADDRESS, ABI, signer);
+        const tx = await contract.getTotalBalance();
+        let balance = await tx.toString();
+        balance = ethers.formatUnits(balance, "ether");
+        setTotalBalance(balance);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -116,13 +123,15 @@ const GovernmentProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const getStakeholderBalance: GovernanceProps["getStakeholderBalance"] = async () => {
     if (stakeholderStatus) {
       try {
-        const provider = new ethers.BrowserProvider(connect).provider;
-        const signer = await provider.getSigner();
-        const contract = new ethers.Contract(ADDRESS, ABI, signer);
-        const tx = await contract.getStakeholdersBalances();
-        let balance = await tx.toString();
-        balance = ethers.formatUnits(balance, "ether");
-        setStakeholderBalance(balance);
+        if (connect) {
+          const provider = new ethers.BrowserProvider(connect).provider;
+          const signer = await provider.getSigner();
+          const contract = new ethers.Contract(ADDRESS, ABI, signer);
+          const tx = await contract.getStakeholdersBalances();
+          let balance = await tx.toString();
+          balance = ethers.formatUnits(balance, "ether");
+          setStakeholderBalance(balance);
+        }
       } catch (error) {
         console.log(error);
       }
@@ -132,11 +141,13 @@ const GovernmentProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // retrieve stakeholders status
   const getStakeholderStatus = async () => {
     try {
-      const provider = new ethers.BrowserProvider(connect).provider;
-      const signer = await provider.getSigner();
-      const contract = new ethers.Contract(ADDRESS, ABI, signer);
-      const tx = await contract.stakeholderStatus();
-      setStakeholderStatus(tx);
+      if (connect) {
+        const provider = new ethers.BrowserProvider(connect).provider;
+        const signer = await provider.getSigner();
+        const contract = new ethers.Contract(ADDRESS, ABI, signer);
+        const tx = await contract.stakeholderStatus();
+        setStakeholderStatus(tx);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -146,13 +157,15 @@ const GovernmentProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const getContributorBalance: GovernanceProps["getContributorBalance"] = async () => {
     if (contributorStatus) {
       try {
-        const provider = new ethers.BrowserProvider(connect).provider;
-        const signer = await provider.getSigner();
-        const contract = new ethers.Contract(ADDRESS, ABI, signer);
-        const tx = await contract.getContributorsBalance();
-        let balance = await tx.toString();
-        balance = ethers.formatUnits(balance, "ether");
-        setContributorBalance(balance);
+        if (connect) {
+          const provider = new ethers.BrowserProvider(connect).provider;
+          const signer = await provider.getSigner();
+          const contract = new ethers.Contract(ADDRESS, ABI, signer);
+          const tx = await contract.getContributorsBalance();
+          let balance = await tx.toString();
+          balance = ethers.formatUnits(balance, "ether");
+          setContributorBalance(balance);
+        }
       } catch (error) {
         console.log(error);
       }
@@ -162,11 +175,13 @@ const GovernmentProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // retrieve contributors status
   const getContributorStatus: GovernanceProps["getContributorStatus"] = async () => {
     try {
-      const provider = new ethers.BrowserProvider(connect).provider;
-      const signer = await provider.getSigner();
-      const contract = new ethers.Contract(ADDRESS, ABI, signer);
-      const tx = await contract.isContributor();
-      setContributorStatus(tx);
+      if (connect) {
+        const provider = new ethers.BrowserProvider(connect).provider;
+        const signer = await provider.getSigner();
+        const contract = new ethers.Contract(ADDRESS, ABI, signer);
+        const tx = await contract.isContributor();
+        setContributorStatus(tx);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -179,24 +194,26 @@ const GovernmentProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setDisability(true);
         const { title, description, beneficiary, amount } = formData;
         const parsedAmount = ethers.parseEther(amount);
-        const provider = new ethers.BrowserProvider(connect).provider;
-        const signer = await provider.getSigner();
-        const contract = new ethers.Contract(ADDRESS, ABI, signer);
-        const propose = await contract.createProposal(title, description, beneficiary.trim(), parsedAmount);
-        await propose.wait(1);
-        setDisability(false);
-        const modalElement = modalRef.current ? modalRef.current : "";
-        if (modalElement instanceof HTMLElement) {
-          modalElement.classList.remove("show");
-          modalElement.style.display = "none";
+        if (connect) {
+          const provider = new ethers.BrowserProvider(connect).provider;
+          const signer = await provider.getSigner();
+          const contract = new ethers.Contract(ADDRESS, ABI, signer);
+          const propose = await contract.createProposal(title, description, beneficiary.trim(), parsedAmount);
+          await propose.wait(1);
+          setDisability(false);
+          const modalElement = modalRef.current ? modalRef.current : "";
+          if (modalElement instanceof HTMLElement) {
+            modalElement.classList.remove("show");
+            modalElement.style.display = "none";
+          }
+          Swal.fire({
+            position: "top-end",
+            icon: "success",
+            text: `You have made a proposal successfully!`,
+            showConfirmButton: true,
+            timer: 4000,
+          });
         }
-        Swal.fire({
-          position: "top-end",
-          icon: "success",
-          text: `You have made a proposal successfully!`,
-          showConfirmButton: true,
-          timer: 4000,
-        });
       } catch (error) {
         setDisability(false);
         console.log(error);
@@ -207,28 +224,30 @@ const GovernmentProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // retrieve proposals
   const proposals: GovernanceProps["proposals"] = async () => {
     try {
-      const provider = new ethers.BrowserProvider(connect).provider;
-      const signer = await provider.getSigner();
-      const contract = new ethers.Contract(ADDRESS, ABI, signer);
-      const proposals = await contract.getAllProposals();
-      const data = await Promise.all(
-        await proposals.map((e: any) => {
-          const info = {
-            id: e.id.toString(),
-            title: e.title,
-            description: e.description,
-            amount: ethers.formatEther(e.amount.toString()),
-            beneficiary: e.beneficiary,
-            upVote: e.upVote.toString(),
-            downVote: e.downVotes.toString(),
-            paid: e.paid,
-          };
+      if (connect) {
+        const provider = new ethers.BrowserProvider(connect).provider;
+        const signer = await provider.getSigner();
+        const contract = new ethers.Contract(ADDRESS, ABI, signer);
+        const proposals = await contract.getAllProposals();
+        const data = await Promise.all(
+          await proposals.map((e: any) => {
+            const info = {
+              id: e.id.toString(),
+              title: e.title,
+              description: e.description,
+              amount: ethers.formatEther(e.amount.toString()),
+              beneficiary: e.beneficiary,
+              upVote: e.upVote.toString(),
+              downVote: e.downVotes.toString(),
+              paid: e.paid,
+            };
 
-          return info;
-        }),
-      );
+            return info;
+          }),
+        );
 
-      setProposalsData(data);
+        setProposalsData(data);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -237,11 +256,13 @@ const GovernmentProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // voting functionality
   const voting: GovernanceProps["voting"] = async (proposalId: number, vote: boolean) => {
     try {
-      const provider = new ethers.BrowserProvider(connect).provider;
-      const signer = await provider.getSigner();
-      const contract = new ethers.Contract(ADDRESS, ABI, signer);
-      const tx = await contract.performVote(proposalId, vote);
-      await tx.wait(1);
+      if (connect) {
+        const provider = new ethers.BrowserProvider(connect).provider;
+        const signer = await provider.getSigner();
+        const contract = new ethers.Contract(ADDRESS, ABI, signer);
+        const tx = await contract.performVote(proposalId, vote);
+        await tx.wait(1);
+      }
     } catch (error: any) {
       if (error.message.includes("Time has already passed")) {
         Swal.fire({
@@ -268,18 +289,20 @@ const GovernmentProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // payment to beneficiary
   const payBeneficiary: GovernanceProps["payBeneficiary"] = async (proposalId: number) => {
     try {
-      const provider = new ethers.BrowserProvider(connect).provider;
-      const signer = await provider.getSigner();
-      const contract = new ethers.Contract(ADDRESS, ABI, signer);
-      const tx = await contract.payBeneficiary(proposalId);
-      await tx.wait(1);
-      Swal.fire({
-        position: "top-end",
-        icon: "success",
-        text: `Payment made successfully!`,
-        showConfirmButton: true,
-        timer: 4000,
-      });
+      if (connect) {
+        const provider = new ethers.BrowserProvider(connect).provider;
+        const signer = await provider.getSigner();
+        const contract = new ethers.Contract(ADDRESS, ABI, signer);
+        const tx = await contract.payBeneficiary(proposalId);
+        await tx.wait(1);
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          text: `Payment made successfully!`,
+          showConfirmButton: true,
+          timer: 4000,
+        });
+      }
     } catch (error) {
       console.log(error);
     }
