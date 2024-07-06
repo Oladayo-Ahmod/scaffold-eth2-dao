@@ -46,23 +46,25 @@ const Home = () => {
   // store the filter keyword in a state
   const [filterKey, setFilterKey] = useState("*");
   // initialize an Isotope object with configs
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const loadIsotope = () => require("isotope-layout");
+    Isotopes = loadIsotope();
+    Isotopes.current = new Isotope(".filter-container", {
+      itemSelector: ".filter-item",
+      layoutMode: "fitRows",
+    });
+    // cleanup
+    return () => {
+      if (isotope.current) {
+        isotope.current.destroy();
+      }
+    };
+  });
+
   useEffect(() => {
     require("bootstrap/dist/js/bootstrap.bundle");
-
-    if (typeof window === "undefined") {
-      const loadIsotope = () => require("isotope-layout");
-      Isotopes = loadIsotope();
-      Isotopes.current = new Isotope(".filter-container", {
-        itemSelector: ".filter-item",
-        layoutMode: "fitRows",
-      });
-      // cleanup
-      return () => {
-        if (isotope.current) {
-          isotope.current.destroy();
-        }
-      };
-    }
   }, []);
 
   // handling filter key change
